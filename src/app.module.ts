@@ -4,6 +4,8 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { User } from './entities/User';
+import { CoffeesModule } from './coffees/coffees.module';
+import { Coffee } from './entities/Coffee';
 
 @Module({
   imports: [
@@ -14,10 +16,11 @@ import { User } from './entities/User';
       username: 'root',
       password: 'RootRoot4',
       database: 'broffee',
-      entities: [User],
+      entities: [User, Coffee],
       synchronize: true,
     }),
     UsersModule,
+    CoffeesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

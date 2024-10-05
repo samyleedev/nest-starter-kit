@@ -31,7 +31,7 @@ export class UsersService {
     try {
       const newUser = this.userRepository.create({
         ...userDetails,
-        createdAt: new Date(),
+        created_at: new Date(),
       });
       return await this.userRepository.save(newUser);
     } catch (error) {

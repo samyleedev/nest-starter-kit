@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Coffee } from './Coffee';
 
 @Entity()
 export class User {
@@ -15,8 +16,16 @@ export class User {
   password: string;
 
   @Column({ default: () => 'CURRENT_TIMESTAMP' })
-  createdAt: Date;
+  created_at: Date;
 
   @Column({ default: () => 'CURRENT_TIMESTAMP' })
-  updatedAt: Date;
+  updated_at: Date;
+
+  // Inverse relationship for coffees where the user is user_one
+  @OneToMany(() => Coffee, (coffee) => coffee.userOne)
+  coffees_one: Coffee[];
+
+  // Inverse relationship for coffees where the user is user_two
+  @OneToMany(() => Coffee, (coffee) => coffee.userTwo)
+  coffees_two: Coffee[];
 }
