@@ -6,6 +6,7 @@ import { UsersModule } from './users/users.module';
 import { User } from './entities/User';
 import { CoffeesModule } from './coffees/coffees.module';
 import { Coffee } from './entities/Coffee';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { Coffee } from './entities/Coffee';
     }),
     UsersModule,
     CoffeesModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
