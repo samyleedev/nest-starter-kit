@@ -2,10 +2,10 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UsersModule } from './users/users.module';
-import { User } from './entities/User';
-import { CoffeesModule } from './coffees/coffees.module';
-import { Coffee } from './entities/Coffee';
+import { UserModule } from './user/user.module';
+import { User } from './user/entities/user.entity';
+import { CoffeeModule } from './coffee/coffee.module';
+import { Coffee } from './coffee/entities/coffee.entity';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
@@ -29,8 +29,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       }),
       inject: [ConfigService],
     }),
-    UsersModule,
-    CoffeesModule,
+    UserModule,
+    CoffeeModule,
     AuthModule,
   ],
   controllers: [AppController],

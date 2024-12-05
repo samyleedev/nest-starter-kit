@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Coffee } from 'src/entities/Coffee';
-import { CreateCoffeeParams } from 'src/coffees/dtos/CreateCoffeeParams.dto';
-import { UpdateCoffeeParamsDto } from 'src/coffees/dtos/UpdateCoffeeParams.dto';
+import { Coffee } from './entities/coffee.entity';
+import { CreateCoffeeParams } from './dtos/create-coffee-params.dto';
+import { UpdateCoffeeParamsDto } from './dtos/update-coffee-params.dto';
 import { Repository } from 'typeorm';
 
 @Injectable()
-export class CoffeesService {
+export class CoffeeService {
   constructor(
     @InjectRepository(Coffee) private coffeeRespository: Repository<Coffee>,
   ) {}

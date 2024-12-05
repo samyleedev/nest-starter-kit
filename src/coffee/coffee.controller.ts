@@ -8,30 +8,30 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { CreateCoffeeDto } from 'src/coffees/dtos/CreateCoffee.dto';
-import { UpdateCoffeeDto } from 'src/coffees/dtos/UpdateCoffee.dto';
-import { CoffeesService } from 'src/coffees/services/coffees/coffees.service';
-import { Coffee } from 'src/entities/Coffee';
+import { CreateCoffeeDto } from './dtos/create-coffee.dto';
+import { UpdateCoffeeDto } from './dtos/update-coffee.dto';
+import { CoffeeService } from './coffee.service';
+import { Coffee } from './entities/coffee.entity';
 
 @Controller('coffees')
-export class CoffeesController {
-  constructor(private coffeesService: CoffeesService) {}
+export class CoffeeController {
+  constructor(private coffeeService: CoffeeService) {}
 
   @Get()
   async findAllCoffees(): Promise<Coffee[]> {
-    return await this.coffeesService.findAll();
+    return await this.coffeeService.findAll();
   }
 
   @Get(':id')
   async findOneCoffee(@Param('id', ParseIntPipe) id: number): Promise<Coffee> {
-    return await this.coffeesService.findOne(id);
+    return await this.coffeeService.findOne(id);
   }
 
   @Post()
   async createCoffee(
     @Body() createCoffeeDto: CreateCoffeeDto,
   ): Promise<Coffee> {
-    return await this.coffeesService.create(createCoffeeDto);
+    return await this.coffeeService.create(createCoffeeDto);
   }
 
   @Patch(':id')
@@ -39,11 +39,11 @@ export class CoffeesController {
     @Param('id', ParseIntPipe) id: number,
     @Body() updateCoffeeDto: UpdateCoffeeDto,
   ): Promise<Coffee> {
-    return await this.coffeesService.update(id, updateCoffeeDto);
+    return await this.coffeeService.update(id, updateCoffeeDto);
   }
 
   @Delete(':id')
   async deleteCoffee(@Param('id', ParseIntPipe) id: number): Promise<void> {
-    await this.coffeesService.delete(id);
+    await this.coffeeService.delete(id);
   }
 }

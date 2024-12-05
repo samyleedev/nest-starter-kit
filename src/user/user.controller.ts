@@ -8,28 +8,28 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { User } from 'src/entities/User';
-import { CreateUserDto } from 'src/users/dtos/CreateUser.dto';
-import { UpdateUserDto } from 'src/users/dtos/UpdateUser.dto';
-import { UsersService } from 'src/users/services/users/users.service';
+import { User } from './entities/user.entity';
+import { CreateUserDto } from './dtos/create-user.dto';
+import { UpdateUserDto } from './dtos/update-user.dto';
+import { UserService } from './user.service';
 
 @Controller('users')
-export class UsersController {
-  constructor(private usersService: UsersService) {}
+export class UserController {
+  constructor(private userService: UserService) {}
 
   @Get()
   async findAllUsers(): Promise<User[]> {
-    return await this.usersService.findAll();
+    return await this.userService.findAll();
   }
 
   @Get(':id')
   async findOneUser(@Param('id', ParseIntPipe) id: number): Promise<User> {
-    return await this.usersService.findOne(id);
+    return await this.userService.findOne(id);
   }
 
   @Post()
   async createUser(@Body() createUserDto: CreateUserDto): Promise<User> {
-    return await this.usersService.create(createUserDto);
+    return await this.userService.create(createUserDto);
   }
 
   @Patch(':id')
@@ -37,11 +37,11 @@ export class UsersController {
     @Param('id', ParseIntPipe) id: number,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<User> {
-    return await this.usersService.update(id, updateUserDto);
+    return await this.userService.update(id, updateUserDto);
   }
 
   @Delete(':id')
   async deleteUser(@Param('id', ParseIntPipe) id: number): Promise<void> {
-    await this.usersService.delete(id);
+    await this.userService.delete(id);
   }
 }
