@@ -7,18 +7,27 @@ import { User } from './entities/User';
 import { CoffeesModule } from './coffees/coffees.module';
 import { Coffee } from './entities/Coffee';
 import { AuthModule } from './auth/auth.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: 'RootRoot4',
-      database: 'broffee',
-      entities: [User, Coffee],
-      synchronize: true,
+    ConfigModule.forRoot({
+      isGlobal: true, 
+    }),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        host: configService.get<string>('DATABASE_HOST'),
+        port: configService.get<number>('DATABASE_PORT'),
+        username: configService.get<string>('DATABASE_USERNAME'),
+        password: configService.get<string>('DATABASE_PASSWORD'),
+        database: configService.get<string>('DATABASE_NAME'),
+        entities: [User, Coffee],
+        synchronize: true,
+      }),
+      inject: [ConfigService],
     }),
     UsersModule,
     CoffeesModule,
