@@ -11,19 +11,19 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async signIn(
+  async login(
     username: string,
-    pass: string,
+    password: string,
   ): Promise<{ access_token: string }> {
-    const user = await this.userRepository.findOneOrFail({
-      where: { username },
-    });
-    if (user?.password !== pass) {
-      throw new UnauthorizedException();
+    const user = await this.userRepository.findOne({ where: { username }});
+
+    if(!user || !(await user.comparePassword(password))) {
+      throw new UnauthorizedException("Invalid username or password");
     }
+
     const payload = { sub: user.id, username: user.username };
-    return {
-      access_token: await this.jwtService.signAsync(payload),
-    };
+    const access_token = await this.jwtService.signAsync(payload);
+    
+    return { access_token };
   }
 }

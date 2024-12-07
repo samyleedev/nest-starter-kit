@@ -1,5 +1,6 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn, BeforeInsert, BeforeUpdate } from 'typeorm';
 import { Coffee } from '../../coffee/entities/coffee.entity';
+import * as bcrypt from 'bcryptjs';
 
 @Entity()
 export class User {
@@ -28,4 +29,16 @@ export class User {
   // Inverse relationship for coffees where the user is user_two
   @OneToMany(() => Coffee, (coffee) => coffee.userTwo)
   coffees_two: Coffee[];
+
+  @BeforeInsert()
+  @BeforeUpdate()
+  async hashPassword() {
+    if (this.password) {
+      this.password = await bcrypt.hash(this.password, 10);
+    }
+  }
+
+  async comparePassword(password: string): Promise<boolean> {
+    return bcrypt.compare(password, this.password);
+  }
 }
