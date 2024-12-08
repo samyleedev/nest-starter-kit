@@ -1,20 +1,22 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../user/entities/user.entity';
 import { Repository } from 'typeorm';
+import { UserService } from '../user/user.service';
+import { registerDto } from './dtos/register.dto';
+import { LoginDto } from './dtos/login.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
     private jwtService: JwtService,
+    private userService: UserService,
   ) {}
 
-  async login(
-    username: string,
-    password: string,
-  ): Promise<{ access_token: string }> {
+  async login(loginDto: LoginDto): Promise<{ access_token: string }> {
+    const {username, password} = loginDto;
     const user = await this.userRepository.findOne({ where: { username }});
 
     if(!user || !(await user.comparePassword(password))) {
@@ -25,5 +27,27 @@ export class AuthService {
     const access_token = await this.jwtService.signAsync(payload);
     
     return { access_token };
+  }
+
+  async register(registerDto: registerDto): Promise<any> {
+    const { username, email } = registerDto;
+
+    const existingUser = await this.userRepository.findOne({ where: [{ username }, { email }]});
+    if (existingUser) {
+      throw new ConflictException('Email or username is already registered.');
+    }
+    
+   const user = await this.userService.create(registerDto);
+   const payload = { sub: user.id, username: user.username };
+   const access_token = await this.jwtService.signAsync(payload);
+
+   const {password, ...userWithoutPassword} = user;
+   return {
+    message: "User registered successfully.",
+    data: {
+      user: userWithoutPassword,
+      access_token
+    }
+   }
   }
 }
