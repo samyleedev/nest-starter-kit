@@ -35,10 +35,8 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('logout')
   logout(@Res() res) {
-    /* 
-    Seulement si le token est stocké dans un cookie, sinon gestion uniquement côté front. À voir donc.
-    pour un logout plus avancée, regarder du coté des "listes de révocation". 
-    */
+    // Seulement si le token est stocké dans un cookie, sinon gestion uniquement côté front.
+    // Pour un logout plus avancée, regarder du coté des "listes de révocation". 
     res.clearCookie('jwt'); 
     return { message: 'Logout successful' };
   }
