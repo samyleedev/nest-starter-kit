@@ -26,6 +26,7 @@ export class UserController {
     return await this.userService.findOne(req.user.sub);
   }
 
+  @UseGuards(AuthGuard)
   @Patch('/me')
   async updateMe(
     @Body() updateUserDto: UpdateUserDto,
@@ -34,26 +35,31 @@ export class UserController {
     return await this.userService.update(req.user.sub, updateUserDto);
   }
 
+  @UseGuards(AuthGuard)
   @Delete('/me')
   async deleteMyAccount(@Req() req): Promise<void> {
     await this.userService.delete(req.user.sub);
   }
 
+  @UseGuards(AuthGuard)
   @Post()
   async createUser(@Body() createUserDto: CreateUserDto): Promise<User> {
     return await this.userService.create(createUserDto);
   }
 
+  @UseGuards(AuthGuard)
   @Get()
   async findAllUsers(): Promise<User[]> {
     return await this.userService.findAll();
   }
 
+  @UseGuards(AuthGuard)
   @Get(':id')
   async findOneUser(@Param('id', ParseIntPipe) id: number): Promise<User> {
     return await this.userService.findOne(id);
   }
 
+  @UseGuards(AuthGuard)
   @Patch(':id')
   async updateUser(
     @Param('id', ParseIntPipe) id: number,
@@ -62,6 +68,7 @@ export class UserController {
     return await this.userService.update(id, updateUserDto);
   }
 
+  @UseGuards(AuthGuard)
   @Delete(':id')
   async deleteUser(@Param('id', ParseIntPipe) id: number): Promise<void> {
     await this.userService.delete(id);

@@ -12,7 +12,7 @@ import {
 import { AuthService } from './auth.service';
 import { LoginDto } from './dtos/login.dto';
 import { AuthGuard } from './auth.guard';
-import { registerDto } from './dtos/register.dto';
+import { RegisterDto } from './dtos/register.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -26,7 +26,7 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @Post('register')
-  register(@Body() registerDto: registerDto) {
+  register(@Body() registerDto: RegisterDto) {
     return this.authService.register(registerDto);
   }
 
@@ -37,11 +37,5 @@ export class AuthController {
     // Pour un logout plus avancée, regarder du coté des "listes de révocation".
     res.clearCookie('jwt');
     return { message: 'Logout successful' };
-  }
-
-  @UseGuards(AuthGuard)
-  @Get('profile')
-  getProfile(@Request() req) {
-    return req.user;
   }
 }

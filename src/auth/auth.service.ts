@@ -8,7 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../user/entities/user.entity';
 import { Repository } from 'typeorm';
 import { UserService } from '../user/user.service';
-import { registerDto } from './dtos/register.dto';
+import { RegisterDto } from './dtos/register.dto';
 import { LoginDto } from './dtos/login.dto';
 
 @Injectable()
@@ -33,14 +33,14 @@ export class AuthService {
     return { access_token };
   }
 
-  async register(registerDto: registerDto): Promise<any> {
+  async register(registerDto: RegisterDto): Promise<any> {
     const { username, email } = registerDto;
 
     const existingUser = await this.userRepository.findOne({
       where: [{ username }, { email }],
     });
     if (existingUser) {
-      throw new ConflictException('Email or username is already registered.');
+      throw new ConflictException('Email or username already in use.');
     }
 
     const user = await this.userService.create(registerDto);
