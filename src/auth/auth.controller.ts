@@ -16,9 +16,7 @@ import { registerDto } from './dtos/register.dto';
 
 @Controller('auth')
 export class AuthController {
-  constructor(
-    private authService: AuthService,
-  ) {}
+  constructor(private authService: AuthService) {}
 
   @HttpCode(HttpStatus.OK)
   @Post('login')
@@ -36,8 +34,8 @@ export class AuthController {
   @Post('logout')
   logout(@Res() res) {
     // Seulement si le token est stocké dans un cookie, sinon gestion uniquement côté front.
-    // Pour un logout plus avancée, regarder du coté des "listes de révocation". 
-    res.clearCookie('jwt'); 
+    // Pour un logout plus avancée, regarder du coté des "listes de révocation".
+    res.clearCookie('jwt');
     return { message: 'Logout successful' };
   }
 

@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  ConflictException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../user/entities/user.entity';
@@ -16,38 +20,40 @@ export class AuthService {
   ) {}
 
   async login(loginDto: LoginDto): Promise<{ access_token: string }> {
-    const {username, password} = loginDto;
-    const user = await this.userRepository.findOne({ where: { username }});
+    const { username, password } = loginDto;
+    const user = await this.userRepository.findOne({ where: { username } });
 
-    if(!user || !(await user.comparePassword(password))) {
-      throw new UnauthorizedException("Invalid username or password");
+    if (!user || !(await user.comparePassword(password))) {
+      throw new UnauthorizedException('Invalid username or password');
     }
 
     const payload = { sub: user.id, username: user.username };
     const access_token = await this.jwtService.signAsync(payload);
-    
+
     return { access_token };
   }
 
   async register(registerDto: registerDto): Promise<any> {
     const { username, email } = registerDto;
 
-    const existingUser = await this.userRepository.findOne({ where: [{ username }, { email }]});
+    const existingUser = await this.userRepository.findOne({
+      where: [{ username }, { email }],
+    });
     if (existingUser) {
       throw new ConflictException('Email or username is already registered.');
     }
-    
-   const user = await this.userService.create(registerDto);
-   const payload = { sub: user.id, username: user.username };
-   const access_token = await this.jwtService.signAsync(payload);
 
-   const {password, ...userWithoutPassword} = user;
-   return {
-    message: "User registered successfully.",
-    data: {
-      user: userWithoutPassword,
-      access_token
-    }
-   }
+    const user = await this.userService.create(registerDto);
+    const payload = { sub: user.id, username: user.username };
+    const access_token = await this.jwtService.signAsync(payload);
+
+    const { password, ...userWithoutPassword } = user;
+    return {
+      message: 'User registered successfully.',
+      data: {
+        user: userWithoutPassword,
+        access_token,
+      },
+    };
   }
 }
