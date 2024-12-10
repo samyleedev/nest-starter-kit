@@ -4,7 +4,7 @@ import {
   Delete,
   Get,
   Param,
-  ParseIntPipe,
+  ParseUUIDPipe,
   Patch,
   Post,
   Req,
@@ -15,6 +15,7 @@ import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { UserService } from './user.service';
 import { AuthGuard } from '../auth/auth.guard';
+import { UUID } from 'crypto';
 
 @Controller('users')
 export class UserController {
@@ -55,14 +56,14 @@ export class UserController {
 
   @UseGuards(AuthGuard)
   @Get(':id')
-  async findOneUser(@Param('id', ParseIntPipe) id: number): Promise<User> {
+  async findOneUser(@Param('id', ParseUUIDPipe) id: UUID): Promise<User> {
     return await this.userService.findOne(id);
   }
 
   @UseGuards(AuthGuard)
   @Patch(':id')
   async updateUser(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseUUIDPipe) id: UUID,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<User> {
     return await this.userService.update(id, updateUserDto);
@@ -70,7 +71,7 @@ export class UserController {
 
   @UseGuards(AuthGuard)
   @Delete(':id')
-  async deleteUser(@Param('id', ParseIntPipe) id: number): Promise<void> {
+  async deleteUser(@Param('id', ParseUUIDPipe) id: UUID): Promise<void> {
     await this.userService.delete(id);
   }
 }

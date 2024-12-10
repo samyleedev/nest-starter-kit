@@ -8,16 +8,17 @@ import {
 } from 'typeorm';
 import { Coffee } from '../../coffee/entities/coffee.entity';
 import * as bcrypt from 'bcryptjs';
+import { UUID } from 'crypto';
 
 @Entity()
 export class User {
-  @PrimaryGeneratedColumn({ type: 'bigint' })
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: UUID;
 
-  @Column()
+  @Column({ unique: true })
   email: string;
 
-  @Column()
+  @Column({ unique: true })
   username: string;
 
   @Column()

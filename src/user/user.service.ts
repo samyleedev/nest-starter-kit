@@ -8,6 +8,7 @@ import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { CreateUserDto } from './dtos/create-user.dto';
+import { UUID } from 'crypto';
 
 @Injectable()
 export class UserService {
@@ -19,7 +20,7 @@ export class UserService {
     return await this.userRepository.find();
   }
 
-  async findOne(id: number): Promise<User> {
+  async findOne(id: UUID): Promise<User> {
     const user = await this.userRepository.findOne({ where: { id } });
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found.`);
@@ -43,7 +44,7 @@ export class UserService {
     return await this.userRepository.save(newUser);
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+  async update(id: UUID, updateUserDto: UpdateUserDto): Promise<User> {
     const result = await this.userRepository.update(id, {
       ...updateUserDto,
       updated_at: new Date(),
@@ -56,7 +57,7 @@ export class UserService {
     return this.userRepository.findOne({ where: { id } });
   }
 
-  async delete(id: number): Promise<void> {
+  async delete(id: UUID): Promise<void> {
     await this.userRepository.delete({ id });
   }
 }
