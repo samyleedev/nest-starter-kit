@@ -27,7 +27,11 @@ export class AuthService {
       throw new UnauthorizedException('Invalid username or password');
     }
 
-    const payload = { sub: user.id, username: user.username };
+    const payload = {
+      sub: user.id,
+      username: user.username,
+      roles: user.roles,
+    };
     const access_token = await this.jwtService.signAsync(payload);
 
     return { access_token };
@@ -44,7 +48,11 @@ export class AuthService {
     }
 
     const user = await this.userService.create(registerDto);
-    const payload = { sub: user.id, username: user.username };
+    const payload = {
+      sub: user.id,
+      username: user.username,
+      roles: user.roles,
+    };
     const access_token = await this.jwtService.signAsync(payload);
 
     const { password, ...userWithoutPassword } = user;

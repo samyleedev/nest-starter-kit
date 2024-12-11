@@ -9,6 +9,7 @@ import {
 import { Coffee } from '../../coffee/entities/coffee.entity';
 import * as bcrypt from 'bcryptjs';
 import { UUID } from 'crypto';
+import { UserRole } from '../../common/enums/user-role.enum';
 
 @Entity()
 export class User {
@@ -23,6 +24,13 @@ export class User {
 
   @Column()
   password: string;
+
+  @Column({
+    type: 'enum',
+    enum: UserRole,
+    default: UserRole.USER,
+  })
+  roles: UserRole;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;
