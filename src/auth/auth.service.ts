@@ -21,7 +21,10 @@ export class AuthService {
 
   async login(loginDto: LoginDto): Promise<{ access_token: string }> {
     const { username, password } = loginDto;
-    const user = await this.userRepository.findOne({ where: { username } });
+    const user = await this.userRepository.findOne({
+      where: { username },
+      select: ['id', 'username', 'roles', 'password'],
+    });
 
     if (!user || !(await user.comparePassword(password))) {
       throw new UnauthorizedException('Invalid username or password');
