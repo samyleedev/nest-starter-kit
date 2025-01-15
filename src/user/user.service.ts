@@ -44,9 +44,16 @@ export class UserService {
     return await this.userRepository.save(newUser);
   }
 
-  async update(id: UUID, updateUserDto: UpdateUserDto): Promise<User> {
+  async update(
+    id: UUID,
+    updateData: Partial<User>,
+    isAdmin: Boolean,
+  ): Promise<User> {
+    if (!isAdmin && updateData.roles) {
+      delete updateData.roles;
+    }
     const result = await this.userRepository.update(id, {
-      ...updateUserDto,
+      ...updateData,
       updated_at: new Date(),
     });
 

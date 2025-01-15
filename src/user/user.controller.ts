@@ -19,6 +19,7 @@ import { UUID } from 'crypto';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
 import { UserRole } from '../common/enums/user-role.enum';
+import { UpdateMeDto } from './dtos/update-me.dto';
 
 @Controller('users')
 @UseGuards(RolesGuard)
@@ -32,11 +33,8 @@ export class UserController {
   }
 
   @Patch('/me')
-  async updateMe(
-    @Body() updateUserDto: UpdateUserDto,
-    @Req() req,
-  ): Promise<User> {
-    return await this.userService.update(req.user.sub, updateUserDto);
+  async updateMe(@Body() updateMeDto: UpdateMeDto, @Req() req): Promise<User> {
+    return await this.userService.update(req.user.sub, updateMeDto, false);
   }
 
   @Delete('/me')
@@ -68,7 +66,7 @@ export class UserController {
     @Param('id', ParseUUIDPipe) id: UUID,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<User> {
-    return await this.userService.update(id, updateUserDto);
+    return await this.userService.update(id, updateUserDto, true);
   }
 
   @Delete(':id')
