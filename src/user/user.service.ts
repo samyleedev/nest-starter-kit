@@ -9,6 +9,7 @@ import { Repository } from 'typeorm';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UUID } from 'crypto';
+import { UserQueryParamsDto } from './dtos/user-query-params.dto';
 
 @Injectable()
 export class UserService {
@@ -16,8 +17,49 @@ export class UserService {
     @InjectRepository(User) private userRepository: Repository<User>,
   ) {}
 
-  async findAll(): Promise<User[]> {
-    return await this.userRepository.find();
+  async findAll(userQueryParamsDto: UserQueryParamsDto): Promise<{
+    data: User[];
+    total: number;
+    page: number;
+    limit: number;
+  }> {
+    const {
+      page = 1,
+      limit = 3,
+      role,
+      search,
+      sortBy = 'created_at',
+      sortOrder = 'DESC',
+    } = userQueryParamsDto;
+
+    const qb = this.userRepository.createQueryBuilder('user');
+
+    // **Filtrage**
+    if (role) {
+      qb.andWhere('user.roles = :role', { role });
+    }
+
+    if (search) {
+      qb.andWhere('(user.username LIKE :search OR user.email LIKE :search)', {
+        search: `%${search}%`,
+      });
+    }
+
+    // **Tri**
+    qb.orderBy(`user.${sortBy}`, sortOrder);
+
+    // **Pagination**
+    qb.skip((page - 1) * limit).take(limit);
+
+    // Exécute la requête
+    const [data, total] = await qb.getManyAndCount();
+
+    return {
+      data,
+      total,
+      page,
+      limit,
+    };
   }
 
   async findOne(id: UUID): Promise<User> {

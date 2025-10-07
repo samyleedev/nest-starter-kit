@@ -7,6 +7,7 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -20,6 +21,7 @@ import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
 import { UserRole } from '../common/enums/user-role.enum';
 import { UpdateMeDto } from './dtos/update-me.dto';
+import { UserQueryParamsDto } from './dtos/user-query-params.dto';
 
 @Controller('users')
 @UseGuards(RolesGuard)
@@ -50,8 +52,10 @@ export class UserController {
 
   @Get()
   @Roles(UserRole.ADMIN)
-  async findAllUsers(): Promise<User[]> {
-    return await this.userService.findAll();
+  async findAllUsers(
+    @Query() userQueryParamsDto: UserQueryParamsDto,
+  ): Promise<any> {
+    return await this.userService.findAll(userQueryParamsDto);
   }
 
   @Get(':id')
