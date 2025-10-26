@@ -4,8 +4,6 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import { User } from './user/entities/user.entity';
-import { CoffeeModule } from './coffee/coffee.module';
-import { Coffee } from './coffee/entities/coffee.entity';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
@@ -23,13 +21,12 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         username: configService.get<string>('DATABASE_USERNAME'),
         password: configService.get<string>('DATABASE_PASSWORD'),
         database: configService.get<string>('DATABASE_NAME'),
-        entities: [User, Coffee],
+        entities: [User],
         synchronize: true,
       }),
       inject: [ConfigService],
     }),
     UserModule,
-    CoffeeModule,
     AuthModule,
   ],
   controllers: [AppController],

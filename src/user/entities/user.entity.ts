@@ -6,7 +6,6 @@ import {
   BeforeInsert,
   BeforeUpdate,
 } from 'typeorm';
-import { Coffee } from '../../coffee/entities/coffee.entity';
 import * as bcrypt from 'bcryptjs';
 import { UUID } from 'crypto';
 import { UserRole } from '../../common/enums/user-role.enum';
@@ -41,14 +40,6 @@ export class User {
     onUpdate: 'CURRENT_TIMESTAMP',
   })
   updated_at: Date;
-
-  // Inverse relationship for coffees where the user is user_one
-  @OneToMany(() => Coffee, (coffee) => coffee.userOne)
-  coffees_one: Coffee[];
-
-  // Inverse relationship for coffees where the user is user_two
-  @OneToMany(() => Coffee, (coffee) => coffee.userTwo)
-  coffees_two: Coffee[];
 
   @BeforeInsert()
   @BeforeUpdate()
