@@ -10,23 +10,23 @@ import {
 import { UserRole } from 'src/common/enums/user-role.enum';
 
 export class CreateUserDto {
-  @ApiProperty({ type: 'string' })
+  @ApiProperty()
   @IsEmail()
   @IsNotEmpty()
   email: string;
 
-  @ApiProperty({ type: 'string' })
+  @ApiProperty()
   @IsNotEmpty()
   @IsString()
   username: string;
 
-  @ApiProperty({ type: 'string', minLength: 8 })
+  @ApiProperty({ minLength: 8 })
   @IsNotEmpty()
   @IsString()
   @MinLength(8)
   password: string;
 
-  @ApiPropertyOptional({ enum: UserRole })
+  @ApiPropertyOptional({ enum: UserRole, default: UserRole.USER })
   @IsOptional()
   @IsEnum(UserRole)
   roles?: UserRole;

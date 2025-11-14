@@ -2,17 +2,17 @@ import { IsEmail, IsOptional, IsString, MinLength } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
 export class UpdateMeDto {
-  @ApiPropertyOptional({ type: 'string' })
+  @ApiPropertyOptional()
   @IsOptional()
   @IsEmail()
   email?: string;
 
-  @ApiPropertyOptional({ type: 'string' })
+  @ApiPropertyOptional()
   @IsOptional()
   @IsString()
   username?: string;
 
-  @ApiPropertyOptional({ type: 'string', minLength: 8 })
+  @ApiPropertyOptional({ minLength: 8 })
   @IsOptional()
   @IsString()
   @MinLength(8)
