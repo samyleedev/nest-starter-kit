@@ -35,7 +35,7 @@ export class UserController {
 
   @ApiOperation({ summary: 'Get logged-in user ("See my informations")' })
   @ApiResponse({ status: 200, type: UserResponseDto })
-  @ApiBearerAuth()
+  @ApiBearerAuth('access-token')
   @Get('/me')
   async getMe(@Req() req): Promise<UserResponseDto> {
     const user = await this.userService.findOne(req.user.sub);
@@ -46,7 +46,7 @@ export class UserController {
 
   @ApiOperation({ summary: 'Update logged-in user ("Update my informations")' })
   @ApiResponse({ status: 200, type: UserResponseDto })
-  @ApiBearerAuth()
+  @ApiBearerAuth('access-token')
   @Patch('/me')
   async updateMe(
     @Body() updateMeDto: UpdateMeDto,
@@ -63,7 +63,7 @@ export class UserController {
   }
 
   @ApiOperation({ summary: 'Remove logged-in user ("Delete my account")' })
-  @ApiBearerAuth()
+  @ApiBearerAuth('access-token')
   @Delete('/me')
   async deleteMyAccount(@Req() req): Promise<void> {
     await this.userService.delete(req.user.sub);
@@ -73,7 +73,7 @@ export class UserController {
     summary: 'Create new user (ADMIN access only)',
   })
   @ApiResponse({ status: 200, type: UserResponseDto })
-  @ApiBearerAuth()
+  @ApiBearerAuth('access-token')
   @Post()
   @Roles(UserRole.ADMIN)
   async createUser(
@@ -91,7 +91,7 @@ export class UserController {
       'Possibility of filtering, sorting and search with query params. Paginated results.',
   })
   @ApiPaginatedResponse(UserResponseDto)
-  @ApiBearerAuth()
+  @ApiBearerAuth('access-token')
   @Get()
   @Roles(UserRole.ADMIN)
   async findAllUsers(
@@ -115,7 +115,7 @@ export class UserController {
     summary: 'Find one user by id (ADMIN access only)',
   })
   @ApiResponse({ status: 200, type: UserResponseDto })
-  @ApiBearerAuth()
+  @ApiBearerAuth('access-token')
   @Get(':id')
   @Roles(UserRole.ADMIN)
   async findOneUser(
@@ -131,7 +131,7 @@ export class UserController {
     summary: 'Update one user by id (ADMIN access only)',
   })
   @ApiResponse({ status: 200, type: UserResponseDto })
-  @ApiBearerAuth()
+  @ApiBearerAuth('access-token')
   @Patch(':id')
   @Roles(UserRole.ADMIN)
   async updateUser(
@@ -147,7 +147,7 @@ export class UserController {
   @ApiOperation({
     summary: 'Delete one user by id (ADMIN access only)',
   })
-  @ApiBearerAuth()
+  @ApiBearerAuth('access-token')
   @Delete(':id')
   @Roles(UserRole.ADMIN)
   async deleteUser(@Param('id', ParseUUIDPipe) id: UUID): Promise<void> {
