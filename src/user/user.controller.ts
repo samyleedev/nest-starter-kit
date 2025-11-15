@@ -97,7 +97,18 @@ export class UserController {
   async findAllUsers(
     @Query() userQueryParamsDto: UserQueryParamsDto,
   ): Promise<PaginatedResponseDto<UserResponseDto>> {
-    return await this.userService.findAll(userQueryParamsDto);
+    const { items, total, limit, page } =
+      await this.userService.findAll(userQueryParamsDto);
+    const data = items.map((user) =>
+      plainToInstance(UserResponseDto, user, {
+        excludeExtraneousValues: true,
+      }),
+    );
+    return plainToInstance(
+      PaginatedResponseDto<UserResponseDto>,
+      { data, total, page, limit },
+      { excludeExtraneousValues: true },
+    );
   }
 
   @ApiOperation({

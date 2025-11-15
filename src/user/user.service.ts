@@ -10,6 +10,7 @@ import { UpdateUserDto } from './dtos/update-user.dto';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UUID } from 'crypto';
 import { UserQueryParamsDto } from './dtos/user-query-params.dto';
+import { PaginatedResults } from 'src/common/interfaces/paginated-results.interface';
 
 @Injectable()
 export class UserService {
@@ -17,12 +18,9 @@ export class UserService {
     @InjectRepository(User) private userRepository: Repository<User>,
   ) {}
 
-  async findAll(userQueryParamsDto: UserQueryParamsDto): Promise<{
-    data: User[];
-    total: number;
-    page: number;
-    limit: number;
-  }> {
+  async findAll(
+    userQueryParamsDto: UserQueryParamsDto,
+  ): Promise<PaginatedResults<User>> {
     const {
       page = 1,
       limit = 3,
@@ -34,7 +32,6 @@ export class UserService {
 
     const qb = this.userRepository.createQueryBuilder('user');
 
-    // **Filtrage**
     if (role) {
       qb.andWhere('user.roles = :role', { role });
     }
@@ -44,18 +41,14 @@ export class UserService {
         search: `%${search}%`,
       });
     }
-
-    // **Tri**
     qb.orderBy(`user.${sortBy}`, sortOrder);
 
-    // **Pagination**
     qb.skip((page - 1) * limit).take(limit);
 
-    // Exécute la requête
-    const [data, total] = await qb.getManyAndCount();
+    const [items, total] = await qb.getManyAndCount();
 
     return {
-      data,
+      items,
       total,
       page,
       limit,
