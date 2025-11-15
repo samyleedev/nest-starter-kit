@@ -11,7 +11,6 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { User } from './entities/user.entity';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { UserService } from './user.service';
@@ -26,6 +25,7 @@ import { plainToInstance } from 'class-transformer';
 import { UserResponseDto } from './dtos/user-response.dto';
 import { PaginatedResponseDto } from 'src/common/dtos/paginated-response.dto';
 import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiPaginatedResponse } from 'src/common/decorators/api-paginated-response.decorator';
 
 @Controller('users')
 @UseGuards(RolesGuard)
@@ -33,16 +33,18 @@ import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 export class UserController {
   constructor(private userService: UserService) {}
 
-  @ApiOperation({ summary: 'Get current user' })
+  @ApiOperation({ summary: 'Get logged-in user ("See my informations")' })
   @ApiResponse({ status: 200, type: UserResponseDto })
   @ApiBearerAuth()
   @Get('/me')
   async getMe(@Req() req): Promise<UserResponseDto> {
     const user = await this.userService.findOne(req.user.sub);
-    return plainToInstance(UserResponseDto, user);
+    return plainToInstance(UserResponseDto, user, {
+      excludeExtraneousValues: true,
+    });
   }
 
-  @ApiOperation({ summary: 'Update current user' })
+  @ApiOperation({ summary: 'Update logged-in user ("Update my informations")' })
   @ApiResponse({ status: 200, type: UserResponseDto })
   @ApiBearerAuth()
   @Patch('/me')
@@ -55,10 +57,12 @@ export class UserController {
       updateMeDto,
       false,
     );
-    return plainToInstance(UserResponseDto, userUpdated);
+    return plainToInstance(UserResponseDto, userUpdated, {
+      excludeExtraneousValues: true,
+    });
   }
 
-  @ApiOperation({ summary: 'Delete current user' })
+  @ApiOperation({ summary: 'Remove logged-in user ("Delete my account")' })
   @ApiBearerAuth()
   @Delete('/me')
   async deleteMyAccount(@Req() req): Promise<void> {
@@ -66,8 +70,7 @@ export class UserController {
   }
 
   @ApiOperation({
-    summary: 'Create new user',
-    description: 'Accessible only to users with ADMIN role',
+    summary: 'Create new user (ADMIN access only)',
   })
   @ApiResponse({ status: 200, type: UserResponseDto })
   @ApiBearerAuth()
@@ -77,14 +80,17 @@ export class UserController {
     @Body() createUserDto: CreateUserDto,
   ): Promise<UserResponseDto> {
     const user = await this.userService.create(createUserDto);
-    return plainToInstance(UserResponseDto, user);
+    return plainToInstance(UserResponseDto, user, {
+      excludeExtraneousValues: true,
+    });
   }
 
   @ApiOperation({
-    summary: 'Find all users',
-    description: 'Accessible only to users with ADMIN role',
+    summary: 'Find all users (ADMIN access only)',
+    description:
+      'Possibility of filtering, sorting and search with query params. Paginated results.',
   })
-  @ApiResponse({ status: 200, type: PaginatedResponseDto<UserResponseDto> })
+  @ApiPaginatedResponse(UserResponseDto)
   @ApiBearerAuth()
   @Get()
   @Roles(UserRole.ADMIN)
@@ -94,7 +100,9 @@ export class UserController {
     return await this.userService.findAll(userQueryParamsDto);
   }
 
-  @ApiOperation({ summary: 'Find one user by id' })
+  @ApiOperation({
+    summary: 'Find one user by id (ADMIN access only)',
+  })
   @ApiResponse({ status: 200, type: UserResponseDto })
   @ApiBearerAuth()
   @Get(':id')
@@ -103,18 +111,32 @@ export class UserController {
     @Param('id', ParseUUIDPipe) id: UUID,
   ): Promise<UserResponseDto> {
     const user = await this.userService.findOne(id);
-    return plainToInstance(UserResponseDto, user);
+    return plainToInstance(UserResponseDto, user, {
+      excludeExtraneousValues: true,
+    });
   }
 
+  @ApiOperation({
+    summary: 'Update one user by id (ADMIN access only)',
+  })
+  @ApiResponse({ status: 200, type: UserResponseDto })
+  @ApiBearerAuth()
   @Patch(':id')
   @Roles(UserRole.ADMIN)
   async updateUser(
     @Param('id', ParseUUIDPipe) id: UUID,
     @Body() updateUserDto: UpdateUserDto,
-  ): Promise<User> {
-    return await this.userService.update(id, updateUserDto, true);
+  ): Promise<UserResponseDto> {
+    const user = await this.userService.update(id, updateUserDto, true);
+    return plainToInstance(UserResponseDto, user, {
+      excludeExtraneousValues: true,
+    });
   }
 
+  @ApiOperation({
+    summary: 'Delete one user by id (ADMIN access only)',
+  })
+  @ApiBearerAuth()
   @Delete(':id')
   @Roles(UserRole.ADMIN)
   async deleteUser(@Param('id', ParseUUIDPipe) id: UUID): Promise<void> {
